@@ -40,26 +40,59 @@ object Homework :
 
   object `Boolean Operators` :
 
-    def not(b: Boolean): Boolean = ??? // here is my greatest solution
+    def not(b: Boolean): Boolean = if (b) false else true // here is my greatest solution
 
-    def and(left: Boolean, right: Boolean): Boolean = ???
+    def and(left: Boolean, right: Boolean): Boolean = if (left) (if (right) true else false) else false
 
-    def or(left: Boolean, right: Boolean): Boolean = ???
+    def or(left: Boolean, right: Boolean): Boolean = if (left) true else (if (right) true else false)
 
   end `Boolean Operators`
 
   object `Fermat Numbers` :
 
-    val multiplication: (BigInt, BigInt) => BigInt = ???
+    val multiplication: (BigInt, BigInt) => BigInt = (a, b) =>
+      @tailrec
+      def multiplicationReq(a: BigInt, b: BigInt, cur: BigInt): BigInt =
+        if ((a <= 0) || (b <= 0)) then cur
+        else multiplicationReq(a, b - 1, cur + a)
 
-    val power: (BigInt, BigInt) => BigInt = ???
+      multiplicationReq(a, b, cur = 0)
 
-    val fermatNumber: Int => BigInt = ???
+    val power: (BigInt, BigInt) => BigInt = (a, b) =>
+      @tailrec
+      def powerReq(a: BigInt, b: BigInt, cur: BigInt): BigInt =
+        if b == 0 then cur
+        else powerReq(a, b - 1, multiplication(cur, a))
+
+      powerReq(a, b, cur = 1)
+
+    val fermatNumber: Int => BigInt = v => power(2, power(2, v)) + 1
 
   end `Fermat Numbers`
 
   object `Look-and-say Sequence` :
-    val lookAndSaySequenceElement: Int => BigInt = ???
+    val lookAndSaySequenceElement: Int => BigInt = n =>
+      @tailrec
+      def loop(n: Int, num: String): BigInt = {
+        if n <= 1 then BigInt(num)
+        else loop(n - 1, lookAndSayNext(num))
+      }
+
+      def lookAndSayNext(number: String): String = {
+        val result = new StringBuilder
+
+        @tailrec
+        def loop(numberString: String, repeat: Char, times: Int): String =
+          if (numberString.isEmpty) result.toString()
+          else if (numberString.head != repeat) {
+            result.append(times).append(repeat)
+            loop(numberString.tail, numberString.head, 1)
+          } else loop(numberString.tail, numberString.head, times + 1)
+
+        loop(number.tail + " ", number.head, 1)
+      }
+
+      loop(n, "1")
 
   end `Look-and-say Sequence`
 
